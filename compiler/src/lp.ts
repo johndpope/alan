@@ -226,7 +226,7 @@ export class Not implements LPNode {
 
   apply(lp: LP): Not | Error {
     if (this.check(lp)) {
-      const newT = lp.data[lp.i]
+      const newT = lp.data.substring(lp.i, lp.i + this.t.length)
       lp.advance(this.t.length)
       return new Not(
         newT,

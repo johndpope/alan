@@ -3,7 +3,8 @@ import * as path from 'path'
 
 import { InputStream, CommonTokenStream, } from 'antlr4'
 
-import { LnLexer, LnParser } from '../ln'
+import { LnLexer, LnParser, lnew, } from '../ln'
+import { LP, } from '../lp'
 
 const resolve = (path: string) => {
   try {
@@ -14,12 +15,23 @@ const resolve = (path: string) => {
 }
 
 export const fromString = (str: string) => {
+  const start = Date.now()
+  const lp = LP.fromText(str)
+  lnew.apply(lp)
+  const mid = Date.now()
   const inputStream = new InputStream(str)
   const langLexer = new LnLexer(inputStream)
   const commonTokenStream = new CommonTokenStream(langLexer)
   const langParser = new LnParser(commonTokenStream)
+  const result = langParser.module()
+  const end = Date.now()
 
-  return langParser.module()
+  console.log('Parse Times')
+  console.log(`LP:    ${mid - start}ms`)
+  console.log(`ANTLR: ${end - mid}ms`)
+  console.log('====================')
+
+  return result
 }
 
 export const fromFile = (filename: string) => {
